@@ -1,0 +1,55 @@
+name: CI/CD - Anti-Corruption Layer
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout code
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      # Setup Docker (to build image)
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      # Build and push image to local registry
+      - name: Build & Push API Image
+        run: |
+          IMAGE=localhost:5000/anti-corruption-api:latest
+          echo "Building Docker image: $IMAGE"
+          docker build -t $IMAGE ./api
+          docker push $IMAGE
+
+      # Setup kubectl & kind
+      - name: Install kubectl
+        run: |
+          curl -LO "https://dl.k8s.io/release/$(curl -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+          chmod +x kubectl && sudo mv kubectl /usr/local/bin/
+
+      - name: Install kind
+        run: |
+          curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.22.0/kind-linux-amd64
+          chmod +x ./kind
+          sudo mv ./kind /usr/local/bin/
+
+      # Create Kind cluster
+      - name: Create Kind Cluster
+        run: |
+          ./infra/k8s-cluster/create-kind-cluster.sh
+          ./infra/docker-registry/start-registry.sh
+
+      # Deploy database
+      - name: Deploy PostgreSQL
+        run: |
+          kubectl apply -f infra/database/deployment.yaml
+
+      # Deploy API
+      - name: Deploy API
+        run: |
+          kubectl apply -f infra/api/deployment.yaml

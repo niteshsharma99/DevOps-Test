@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: anti-corruption-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: anti-corruption-api
+  template:
+    metadata:
+      labels:
+        app: anti-corruption-api
+    spec:
+      containers:
+        - name: api
+          image: localhost:5000/anti-corruption-api:latest
+          ports:
+            - containerPort: 3000
+          volumeMounts:
+            - name: api-config
+              mountPath: /app/config
+              readOnly: true
+      volumes:
+        - name: api-config
+          configMap:
+            name: api-config
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api-config
+data:
+  mappings.yaml: |
+    mappings:
+      - api_endpoint: /users
+        query: SELECT id, name, created_at FROM mytable;
+        columns:
+          id: user_id
+          name: username
+          created_at: registered_on
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: anti-corruption-api-service
+spec:
+  type: NodePort
+  ports:
+    - port: 3000
+      targetPort: 3000
+      nodePort: 30080
+  selector:
+    app: anti-corruption-api

@@ -1,0 +1,7 @@
+mappings:
+  - api_endpoint: users
+    query: SELECT id, name, created_at FROM mytable;
+    columns:
+      id: user_id
+      name: username
+      created_at: registered_on
