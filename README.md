@@ -20,19 +20,24 @@ cd infra/docker-registry
 ./start-registry.sh
 
 **Deploy PostgreSQL**
+
 kubectl apply -f infra/database/deployment.yaml
 
 **Deploy API**
+
 kubectl apply -f infra/api/deployment.yaml
 
 **Test API**
+
 kubectl port-forward svc/anti-corruption-api-service 3000:3000
 curl http://localhost:3000/users
 
 **GitOps Workflow**
+
 The workflow is defined in .github/workflows/main.yaml.
 
 **Triggers**
+
 Config changes (mappings.yaml) → ConfigMap updated → API reloads automatically.
 API code/Dockerfile changes → New Docker image built + pushed → Deployment refreshed.
 Database manifest changes → PostgreSQL redeployed.
