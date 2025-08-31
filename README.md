@@ -3,16 +3,19 @@ This project implements a self-service database anti-corruption layer REST API o
 **Setup Instructions**
 
 **Prerequisites**
+
 Docker
 Kind (Kubernetes in Docker)
 kubectl
 GitHub Actions enabled (for CI/CD)
 
 **Create Kind Cluster:**
+
 cd infra/k8s-cluster
 ./create-kind-cluster.sh
 
 **Start Local Docker Registry**
+
 cd infra/docker-registry
 ./start-registry.sh
 
