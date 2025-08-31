@@ -1,4 +1,9 @@
-This project implements a self-service database anti-corruption layer REST API on Kubernetes with a GitOps workflow. 1. Developers define REST endpoints → SQL queries → field mappings in mappings.yaml. 2. A Python Flask API reads the config and dynamically serves data from PostgreSQL. 3. All infrastructure is deployed to a Kind cluster with a local Docker registry. 4. GitHub Actions automates build + push + deployment (GitOps style).
+This project implements a self-service database anti-corruption layer REST API on Kubernetes with a GitOps workflow. 
+
+1. Developers define REST endpoints → SQL queries → field mappings in mappings.yaml.
+2. A Python Flask API reads the config and dynamically serves data from PostgreSQL.
+3. All infrastructure is deployed to a Kind cluster with a local Docker registry.
+4. GitHub Actions automates build + push + deployment (GitOps style).
 
 **Setup Instructions**
 
